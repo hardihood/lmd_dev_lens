@@ -7,7 +7,7 @@ load_dotenv()
 
 class AzureDevOpsClient:
     def __init__(self):
-        self.base_url = f"{os.getenv('AZURE_ORG_URL')}/{os.getenv('PROJECT_NAME')}/_apis"
+        self.base_url = f"{os.getenv('AZURE_ORG_URL')}/_apis"
         self.headers = {
             'Content-Type': 'application/json',
             'Authorization': f'Basic {os.getenv("PERSONAL_ACCESS_TOKEN")}'
@@ -45,7 +45,7 @@ class AzureDevOpsClient:
         if not work_item_ids:
             return []
             
-        batch_url = f"{self.base_url}/wit/workitemsbatch?api-version=7.1"
+        batch_url = f"{self.base_url}/wit/workitems/{work_item_ids}?api-version=7.0"
         payload = {
             "ids": work_item_ids,
             "fields": [
@@ -56,7 +56,7 @@ class AzureDevOpsClient:
         }
         
         try:
-            response = requests.post(batch_url, headers=self.headers, json=payload)
+            response = requests.get(batch_url, headers=self.headers, verify=False)
             response.raise_for_status()
             items = response.json().get('value', [])
             
@@ -119,3 +119,5 @@ class AzureDevOpsClient:
 
 if __name__ == "__main__":
     print("Azure DevOps Ticket Extractor Module")
+    client = AzureDevOpsClient()
+    client._get_work_item_details(396712)

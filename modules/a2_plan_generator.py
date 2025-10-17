@@ -20,6 +20,8 @@ class PlanGenerator:
             # Build and execute LLM prompt
             prompt = self._build_prompt(ticket_data, code_context)
             response = completion(
+                base_url=os.getenv('LLM_BASE_URL'),
+                api_key=os.getenv('LLM_API_KEY'),
                 model=f"{self.llm_provider}/{self.model_name}",
                 messages=[{"content": prompt, "role": "user"}],
                 temperature=0.2,
